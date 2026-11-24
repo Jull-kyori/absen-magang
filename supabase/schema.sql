@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS public.locations (
     lat DOUBLE PRECISION NOT NULL,
     lng DOUBLE PRECISION NOT NULL,
     radius_meter INTEGER NOT NULL DEFAULT 100,
+    gunakan_radius BOOLEAN NOT NULL DEFAULT TRUE,
     aktif BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -129,12 +130,16 @@ CREATE TABLE IF NOT EXISTS public.daily_logbooks (
     kegiatan TEXT NOT NULL,
     hasil TEXT,
     kendala TEXT,
-    rencana_besok TEXT,
+    bukti_url TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     CONSTRAINT unique_logbook_user_tanggal UNIQUE (user_id, tanggal),
     CONSTRAINT logbook_kegiatan_not_empty CHECK (length(trim(kegiatan)) >= 5)
 );
+
+ALTER TABLE public.locations ADD COLUMN IF NOT EXISTS gunakan_radius BOOLEAN NOT NULL DEFAULT TRUE;
+ALTER TABLE public.daily_logbooks ADD COLUMN IF NOT EXISTS bukti_url TEXT;
+ALTER TABLE public.daily_logbooks DROP COLUMN IF EXISTS rencana_besok;
 
 CREATE INDEX IF NOT EXISTS idx_logbooks_user_tanggal ON public.daily_logbooks(user_id, tanggal DESC);
 CREATE INDEX IF NOT EXISTS idx_logbooks_tanggal ON public.daily_logbooks(tanggal DESC);
@@ -323,13 +328,23 @@ CREATE POLICY "Magang dapat mengajukan perizinan baru" ON public.leave_requests 
 INSERT INTO storage.buckets (id, name, public)
 VALUES 
     ('attendance_photos', 'attendance_photos', true),
-    ('leave_attachments', 'leave_attachments', false)
+    ('leave_attachments', 'leave_attachments', false),
+    ('logbook_photos', 'logbook_photos', true)
 ON CONFLICT (id) DO NOTHING;
 
 DROP POLICY IF EXISTS "User terotentikasi dapat upload selfie" ON storage.objects;
 DROP POLICY IF EXISTS "Foto selfie dapat dilihat publik atau terotentikasi" ON storage.objects;
 CREATE POLICY "User terotentikasi dapat upload selfie" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'attendance_photos');
 CREATE POLICY "Foto selfie dapat dilihat publik atau terotentikasi" ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'attendance_photos');
+
+DROP POLICY IF EXISTS "Mahasiswa dapat upload foto logbook" ON storage.objects;
+DROP POLICY IF EXISTS "Foto bukti logbook dapat dilihat user" ON storage.objects;
+CREATE POLICY "Mahasiswa dapat upload foto logbook" ON storage.objects FOR INSERT TO authenticated WITH CHECK (
+    bucket_id = 'logbook_photos' AND auth.uid()::text = (storage.foldername(name))[1]
+);
+CREATE POLICY "Foto bukti logbook dapat dilihat user" ON storage.objects FOR SELECT TO authenticated USING (
+    bucket_id = 'logbook_photos' AND (auth.uid()::text = (storage.foldername(name))[1] OR public.is_admin())
+);
 
 DROP POLICY IF EXISTS "User terotentikasi dapat upload lampiran izin" ON storage.objects;
 DROP POLICY IF EXISTS "Lampiran izin dapat dilihat pemilik atau admin" ON storage.objects;

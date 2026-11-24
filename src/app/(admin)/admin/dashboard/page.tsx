@@ -15,6 +15,7 @@ const DEFAULT_LOCATION: LocationSetting = {
   lat: -7.869857,
   lng: 111.462192,
   radius_meter: 350,
+  gunakan_radius: true,
   aktif: true,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),

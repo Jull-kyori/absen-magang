@@ -11,6 +11,7 @@ const DEFAULT_LOCATION: LocationSetting = {
   lat: -7.869857,
   lng: 111.462192,
   radius_meter: 350,
+  gunakan_radius: true,
   aktif: true,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
@@ -23,6 +24,7 @@ export async function calibrateOfficeLocationAction(payload: {
   lat: number
   lng: number
   radius_meter?: number
+  gunakan_radius?: boolean
 }): Promise<{ success: boolean; message: string }> {
   try {
     const supabase = await createClient()
@@ -44,8 +46,9 @@ export async function calibrateOfficeLocationAction(payload: {
     }
 
     const radius = payload.radius_meter || 350
+    const gunakanRadius = payload.gunakan_radius !== false
 
-    if (!Number.isInteger(radius) || radius < 50 || radius > 5000) {
+    if (gunakanRadius && (!Number.isInteger(radius) || radius < 50 || radius > 5000)) {
       return { success: false, message: 'Radius harus berupa angka bulat antara 50 sampai 5.000 meter.' }
     }
 
@@ -63,16 +66,17 @@ export async function calibrateOfficeLocationAction(payload: {
           lat: payload.lat,
           lng: payload.lng,
           radius_meter: radius,
+          gunakan_radius: gunakanRadius,
           aktif: true,
           updated_at: new Date().toISOString(),
         })
         .eq('id', existing[0].id)
-        .select('id, radius_meter')
+        .select('id, radius_meter, gunakan_radius')
         .single()
       if (error) {
         return { success: false, message: 'Gagal menyimpan radius: ' + error.message }
       }
-      if (!updatedLocation || updatedLocation.radius_meter !== radius) {
+      if (!updatedLocation || updatedLocation.radius_meter !== radius || updatedLocation.gunakan_radius !== gunakanRadius) {
         return { success: false, message: 'Radius tidak berubah di database. Periksa policy RLS atau jalankan ulang schema.sql.' }
       }
     } else {
@@ -81,14 +85,15 @@ export async function calibrateOfficeLocationAction(payload: {
         lat: payload.lat,
         lng: payload.lng,
         radius_meter: radius,
+        gunakan_radius: gunakanRadius,
         aktif: true,
       })
-        .select('id, radius_meter')
+        .select('id, radius_meter, gunakan_radius')
         .single()
       if (error) {
         return { success: false, message: 'Gagal menyimpan radius: ' + error.message }
       }
-      if (!insertedLocation || insertedLocation.radius_meter !== radius) {
+      if (!insertedLocation || insertedLocation.radius_meter !== radius || insertedLocation.gunakan_radius !== gunakanRadius) {
         return { success: false, message: 'Radius tidak berhasil dibuat di database. Periksa policy RLS atau jalankan ulang schema.sql.' }
       }
     }
@@ -97,7 +102,9 @@ export async function calibrateOfficeLocationAction(payload: {
     revalidatePath('/admin/dashboard')
     return {
       success: true,
-      message: `Titik kantor Bakesbangpol berhasil diperbarui oleh Admin (Radius: ${radius}m).`,
+      message: gunakanRadius
+        ? `Titik kantor Bakesbangpol berhasil diperbarui oleh Admin (Radius: ${radius}m).`
+        : 'Batas radius presensi berhasil dinonaktifkan. Validasi lokasi tetap dicatat.',
     }
   } catch (err: any) {
     return {
@@ -141,7 +148,7 @@ export async function submitAttendanceAction(payload: {
       activeLocation.lng
     )
 
-    if (distanceMeter > activeLocation.radius_meter) {
+    if (activeLocation.gunakan_radius !== false && distanceMeter > activeLocation.radius_meter) {
       return {
         success: false,
         message: `Absen ditolak. Jarak Anda (${distanceMeter} m) melebihi batas radius kantor (${activeLocation.radius_meter} m).`,

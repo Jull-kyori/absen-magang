@@ -21,6 +21,7 @@ export interface LocationSetting {
   lat: number
   lng: number
   radius_meter: number
+  gunakan_radius: boolean
   aktif: boolean
   created_at: string
   updated_at: string
@@ -59,7 +60,7 @@ export interface DailyLogbook {
   kegiatan: string
   hasil: string | null
   kendala: string | null
-  rencana_besok: string | null
+  bukti_url: string | null
   created_at: string
   updated_at: string
   users?: UserProfile

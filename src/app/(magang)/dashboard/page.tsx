@@ -16,6 +16,7 @@ const DEFAULT_LOCATION: LocationSetting = {
   lat: -7.868800,
   lng: 111.464500,
   radius_meter: 350, // Default 350 meter agar menjangkau area kantor
+  gunakan_radius: true,
   aktif: true,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),

@@ -58,6 +58,7 @@ export function AdminDashboardClient({ rows, todayDate, location, stats, weeklyS
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [radius, setRadius] = useState(String(location?.radius_meter ?? 350))
+  const [radiusEnabled, setRadiusEnabled] = useState(location?.gunakan_radius ?? true)
   const [locationMessage, setLocationMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [isSavingLocation, startSavingLocation] = useTransition()
   const [selectedPhoto, setSelectedPhoto] = useState<{
@@ -71,7 +72,7 @@ export function AdminDashboardClient({ rows, todayDate, location, stats, weeklyS
   const handleSaveRadius = () => {
     const radiusMeter = Number(radius)
 
-    if (!Number.isInteger(radiusMeter) || radiusMeter < 50 || radiusMeter > 5000) {
+    if (radiusEnabled && (!Number.isInteger(radiusMeter) || radiusMeter < 50 || radiusMeter > 5000)) {
       setLocationMessage({ type: 'error', text: 'Radius harus berupa angka bulat antara 50 sampai 5.000 meter.' })
       return
     }
@@ -86,6 +87,7 @@ export function AdminDashboardClient({ rows, todayDate, location, stats, weeklyS
         lat: location.lat,
         lng: location.lng,
         radius_meter: radiusMeter,
+        gunakan_radius: radiusEnabled,
       })
 
       setLocationMessage({
@@ -176,7 +178,7 @@ export function AdminDashboardClient({ rows, todayDate, location, stats, weeklyS
                   step={1}
                   value={radius}
                   onChange={(event) => setRadius(event.target.value)}
-                  disabled={isSavingLocation}
+                  disabled={isSavingLocation || !radiusEnabled}
                   className="w-32 px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 disabled:bg-slate-50"
                 />
                 <span className="text-xs font-semibold text-slate-500">meter</span>
@@ -197,6 +199,18 @@ export function AdminDashboardClient({ rows, todayDate, location, stats, weeklyS
             </button>
           </div>
         </div>
+
+        <label className="mt-4 inline-flex items-center gap-2.5 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={radiusEnabled}
+            onChange={(event) => setRadiusEnabled(event.target.checked)}
+            disabled={isSavingLocation}
+            className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+          />
+          <span className="text-xs font-bold text-slate-700">Gunakan batas radius GPS</span>
+          <span className="text-[11px] text-slate-400">(matikan untuk mengizinkan presensi dari lokasi mana pun)</span>
+        </label>
 
         {locationMessage && (
           <p className={`mt-3 text-xs font-semibold ${locationMessage.type === 'success' ? 'text-emerald-600' : 'text-rose-600'}`}>
@@ -314,7 +328,7 @@ export function AdminDashboardClient({ rows, todayDate, location, stats, weeklyS
             </div>
             <div className="mt-4 pt-3 border-t border-white/15 text-[11px] text-blue-100 space-y-2">
               <div className="flex items-center justify-between gap-3"><span>Hari teraktif</span><strong className="text-white">{peakDay.label}</strong></div>
-              <div className="flex items-center justify-between gap-3"><span>Radius aktif</span><strong className="text-white">{location?.radius_meter ?? 350} m</strong></div>
+              <div className="flex items-center justify-between gap-3"><span>Radius aktif</span><strong className="text-white">{location?.gunakan_radius === false ? 'Tanpa batas' : `${location?.radius_meter ?? 350} m`}</strong></div>
             </div>
           </aside>
         </div>
@@ -343,6 +357,7 @@ export function AdminDashboardClient({ rows, todayDate, location, stats, weeklyS
                   <span className="text-[10px] font-bold text-indigo-600 whitespace-nowrap">{formatIndonesianDate(logbook.tanggal)}</span>
                 </div>
                 <p className="text-xs font-bold text-slate-800 mt-3 line-clamp-3">{logbook.kegiatan}</p>
+                {logbook.bukti_url && <img src={logbook.bukti_url} alt="Bukti kegiatan" className="mt-3 h-24 w-full rounded-xl object-cover border border-slate-200" />}
                 <div className="mt-3 pt-3 border-t border-slate-200/70 space-y-1.5 text-[11px] text-slate-500">
                   <p><span className="font-bold text-slate-700">Hasil:</span> {logbook.hasil || 'Belum diisi'}</p>
                   {logbook.kendala && <p><span className="font-bold text-slate-700">Kendala:</span> {logbook.kendala}</p>}

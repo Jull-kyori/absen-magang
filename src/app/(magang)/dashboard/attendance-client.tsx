@@ -209,7 +209,7 @@ export function AttendanceClient({
     }
   }
 
-  const isWithinRadius = distance !== null && location && distance <= location.radius_meter
+  const isWithinRadius = distance !== null && !!location && (location.gunakan_radius === false || distance <= location.radius_meter)
   const hasCheckedIn = !!attendance?.jam_masuk
   const hasCheckedOut = !!attendance?.jam_pulang
 
@@ -305,7 +305,7 @@ export function AttendanceClient({
                     {location?.nama || 'Bakesbangpol Kabupaten Ponorogo'}
                   </p>
                   <p className="text-[11px] text-slate-500 mt-0.5">
-                    Area radius presensi: <span className="font-bold text-blue-600">{location?.radius_meter || 350} meter</span>
+                    Area radius presensi: <span className="font-bold text-blue-600">{location?.gunakan_radius === false ? 'Tanpa batas' : `${location?.radius_meter || 350} meter`}</span>
                   </p>
                 </div>
               </div>
@@ -313,7 +313,7 @@ export function AttendanceClient({
               <div className="p-3 bg-slate-50 rounded-xl space-y-1.5 text-[11px]">
                 <p className="font-semibold text-slate-700">Ketentuan Presensi:</p>
                 <ul className="list-disc list-inside space-y-1 text-slate-500">
-                  <li>Presensi wajib dilakukan di dalam area kantor instansi.</li>
+                  <li>{location?.gunakan_radius === false ? 'Batas radius sedang dinonaktifkan oleh admin.' : 'Presensi wajib dilakukan di dalam area kantor instansi.'}</li>
                   <li>Absen masuk lewat pukul 08:30 WIB otomatis ditandai <b>Terlambat</b>.</li>
                   <li>Absen pulang dapat dilakukan mulai pukul 17:00 WIB.</li>
                 </ul>
@@ -401,7 +401,7 @@ export function AttendanceClient({
                         : 'Di Luar Jangkauan Instansi'}
                     </p>
                     <p className="text-[11px] text-slate-600 mt-0.5">
-                      Jarak terdeteksi: <span className="font-bold">{distance} meter</span> (Batas radius: {location?.radius_meter || 350} m)
+                      Jarak terdeteksi: <span className="font-bold">{distance} meter</span> ({location?.gunakan_radius === false ? 'Tanpa batas radius' : `Batas radius: ${location?.radius_meter || 350} m`})
                     </p>
                   </div>
                 </div>
@@ -520,7 +520,7 @@ export function AttendanceClient({
 
             {!isWithinRadius && !hasCheckedOut && (
               <p className="text-xs text-center text-amber-800 bg-amber-50/90 py-2.5 px-4 rounded-xl border border-amber-200/80 leading-relaxed">
-                ⚠️ Tombol absen akan otomatis aktif saat GPS Anda berada dalam radius {location?.radius_meter || 350} meter dari kantor Bakesbangpol Ponorogo.
+                ⚠️ {location?.gunakan_radius === false ? 'Batas radius dinonaktifkan. Pastikan GPS tetap aktif untuk mencatat lokasi presensi.' : `Tombol absen akan otomatis aktif saat GPS Anda berada dalam radius ${location?.radius_meter || 350} meter dari kantor Bakesbangpol Ponorogo.`}
               </p>
             )}
           </div>

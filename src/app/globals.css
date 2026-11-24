@@ -11,7 +11,72 @@ body {
     radial-gradient(circle at 92% 8%, rgba(14, 165, 233, 0.1), transparent 26rem),
     var(--background);
   color: var(--foreground);
+  transition: background-color 300ms ease, color 300ms ease;
 }
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  --background: #08111f;
+  --foreground: #e5edf8;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(79, 70, 229, 0.18), transparent 30rem),
+    radial-gradient(circle at 92% 8%, rgba(14, 165, 233, 0.12), transparent 26rem),
+    #08111f;
+  color: var(--foreground);
+}
+
+/* Dark glass palette for shared Tailwind utility surfaces. */
+html.dark .bg-white,
+html.dark .bg-white\/95,
+html.dark .bg-white\/90 {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.86), rgba(15, 23, 42, 0.68)) !important;
+  border-color: rgba(100, 116, 139, 0.34) !important;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.2), inset 0 1px rgba(148, 163, 184, 0.08);
+}
+
+html.dark .liquid-page .bg-white:hover {
+  border-color: rgba(129, 140, 248, 0.48) !important;
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.28), inset 0 1px rgba(148, 163, 184, 0.12);
+}
+
+html.dark [class~="bg-slate-50"],
+html.dark [class~="bg-slate-50/80"],
+html.dark [class~="bg-slate-50/60"],
+html.dark [class~="bg-slate-100"],
+html.dark [class~="bg-slate-100/80"] {
+  background-color: rgba(30, 41, 59, 0.72) !important;
+}
+
+html.dark [class~="text-slate-900"] { color: #f1f5f9 !important; }
+html.dark [class~="text-slate-800"] { color: #e2e8f0 !important; }
+html.dark [class~="text-slate-700"] { color: #cbd5e1 !important; }
+html.dark [class~="text-slate-600"] { color: #b8c4d4 !important; }
+html.dark [class~="text-slate-500"] { color: #94a3b8 !important; }
+html.dark [class~="text-slate-400"] { color: #8492a6 !important; }
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: rgba(15, 23, 42, 0.72) !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(100, 116, 139, 0.48) !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder { color: #64748b; }
+
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-slate-200\/60,
+html.dark .border-slate-200\/70,
+html.dark .border-slate-200\/80 { border-color: rgba(100, 116, 139, 0.34) !important; }
+
+html.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: rgba(100, 116, 139, 0.24) !important; }
+html.dark .hover\:bg-slate-50\/60:hover { background-color: rgba(51, 65, 85, 0.42) !important; }
+html.dark .hover\:bg-slate-200\/70:hover { background-color: rgba(71, 85, 105, 0.58) !important; }
 
 /* Liquid glass system: shared by admin and mahasiswa pages. */
 .liquid-page {

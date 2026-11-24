@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { logoutAction } from '@/app/(auth)/login/actions'
 import Link from 'next/link'
+import { ThemeToggle } from '@/components/layout/theme-toggle'
 
 export default async function AdminLayout({
   children,
@@ -45,7 +46,7 @@ export default async function AdminLayout({
     <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row">
       {/* Sidebar Admin (Desktop) */}
       <aside className="w-full md:w-64 bg-slate-900 text-slate-200 flex flex-col shrink-0 border-r border-slate-800">
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between">
+          <div className="p-5 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
               <ShieldCheck className="w-5 h-5" />
@@ -56,6 +57,7 @@ export default async function AdminLayout({
               </h1>
               <p className="text-[10px] text-slate-400">Bakesbangpol Ponorogo</p>
             </div>
+            <ThemeToggle />
           </div>
         </div>
 

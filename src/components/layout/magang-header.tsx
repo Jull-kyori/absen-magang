@@ -6,6 +6,7 @@ import { UserProfile } from '@/types/database.types'
 import { BookOpen, Building2, CalendarCheck, History, LogOut, Shield } from 'lucide-react'
 import { logoutAction } from '@/app/(auth)/login/actions'
 import { useTransition } from 'react'
+import { ThemeToggle } from './theme-toggle'
 
 export function MagangHeader({ user, isAdmin }: { user: UserProfile; isAdmin?: boolean }) {
   const pathname = usePathname()
@@ -73,6 +74,7 @@ export function MagangHeader({ user, isAdmin }: { user: UserProfile; isAdmin?: b
 
         {/* Info Mahasiswa & Tombol Admin Switcher */}
         <div className="flex items-center gap-2.5">
+          <ThemeToggle />
           {/* Tombol Pintasan ke Panel Admin (JIKA AKUN ADALAH ADMIN) */}
           {isAdmin && (
             <Link
