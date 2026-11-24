@@ -284,3 +284,109 @@ html.dark .hover\:bg-slate-200\/70:hover { background-color: rgba(71, 85, 105, 0
     transform: translateX(100%);
   }
 }
+
+/* Tokyo Night theme: deep navy surfaces, lavender text, and restrained neon accents. */
+html.dark body.bg-slate-50 {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(122, 162, 247, 0.14), transparent 30rem),
+    radial-gradient(circle at 92% 8%, rgba(187, 154, 247, 0.1), transparent 26rem),
+    #16161e !important;
+  color: #c0caf5 !important;
+}
+
+html.dark body {
+  --background: #16161e;
+  --foreground: #c0caf5;
+}
+
+html.dark .liquid-page::before {
+  background: rgba(122, 162, 247, 0.2);
+  opacity: 0.42;
+}
+
+html.dark .liquid-page::after {
+  background: rgba(187, 154, 247, 0.16);
+  opacity: 0.38;
+}
+
+html.dark .liquid-page .bg-white,
+html.dark .liquid-page .bg-white\/95,
+html.dark .liquid-page .bg-white\/90 {
+  background: linear-gradient(145deg, rgba(36, 40, 59, 0.94), rgba(26, 27, 38, 0.9)) !important;
+  border-color: rgba(86, 95, 137, 0.58) !important;
+  box-shadow: 0 20px 48px rgba(7, 8, 15, 0.34), inset 0 1px rgba(192, 202, 245, 0.08);
+}
+
+html.dark .liquid-page .bg-white:hover {
+  border-color: rgba(122, 162, 247, 0.72) !important;
+  box-shadow: 0 24px 58px rgba(7, 8, 15, 0.46), 0 0 28px rgba(122, 162, 247, 0.08), inset 0 1px rgba(192, 202, 245, 0.1);
+}
+
+html.dark .liquid-header {
+  background: rgba(26, 27, 38, 0.88) !important;
+  border-color: rgba(86, 95, 137, 0.46) !important;
+  box-shadow: 0 10px 32px rgba(7, 8, 15, 0.28);
+}
+
+html.dark .liquid-nav {
+  background: rgba(26, 27, 38, 0.92) !important;
+  border-color: rgba(86, 95, 137, 0.52) !important;
+}
+
+html.dark [class~="bg-slate-50"],
+html.dark [class~="bg-slate-50/80"],
+html.dark [class~="bg-slate-50/60"],
+html.dark [class~="bg-slate-100"],
+html.dark [class~="bg-slate-100/80"] {
+  background-color: rgba(47, 51, 77, 0.72) !important;
+}
+
+html.dark [class~="bg-slate-50"] input,
+html.dark [class~="bg-slate-50"] textarea {
+  background-color: #1a1b26 !important;
+}
+
+html.dark [class~="text-slate-900"] { color: #c0caf5 !important; }
+html.dark [class~="text-slate-800"] { color: #b8c4e8 !important; }
+html.dark [class~="text-slate-700"] { color: #a9b1d6 !important; }
+html.dark [class~="text-slate-600"] { color: #9aa5ce !important; }
+html.dark [class~="text-slate-500"] { color: #8b94b8 !important; }
+html.dark [class~="text-slate-400"] { color: #737da6 !important; }
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #1a1b26 !important;
+  color: #c0caf5 !important;
+  border-color: #3b4261 !important;
+}
+
+html.dark input:focus,
+html.dark textarea:focus,
+html.dark select:focus {
+  border-color: #7aa2f7 !important;
+  box-shadow: 0 0 0 3px rgba(122, 162, 247, 0.14) !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder { color: #565f89; }
+
+html.dark [class~="border-slate-100"],
+html.dark [class~="border-slate-200"],
+html.dark [class~="border-slate-200/60"],
+html.dark [class~="border-slate-200/70"],
+html.dark [class~="border-slate-200/80"] {
+  border-color: #3b4261 !important;
+}
+
+html.dark [class~="text-indigo-600"] { color: #bb9af7 !important; }
+html.dark [class~="text-blue-600"] { color: #7aa2f7 !important; }
+html.dark [class~="text-emerald-600"] { color: #9ece6a !important; }
+html.dark [class~="text-amber-600"] { color: #e0af68 !important; }
+html.dark [class~="bg-indigo-50"] { background-color: rgba(187, 154, 247, 0.14) !important; }
+html.dark [class~="bg-blue-50"] { background-color: rgba(122, 162, 247, 0.14) !important; }
+html.dark [class~="bg-emerald-50"] { background-color: rgba(158, 206, 106, 0.14) !important; }
+
+html.dark .liquid-action-button:hover {
+  box-shadow: 0 18px 36px rgba(122, 162, 247, 0.25), 0 0 24px rgba(187, 154, 247, 0.12);
+}
