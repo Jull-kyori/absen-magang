@@ -120,7 +120,27 @@ CREATE INDEX IF NOT EXISTS idx_attendance_user_tanggal ON public.attendance(user
 CREATE INDEX IF NOT EXISTS idx_attendance_tanggal ON public.attendance(tanggal);
 
 -- ============================================================
--- 6. TABEL PERIZINAN (leave_requests)
+-- 6. TABEL LOGBOOK HARIAN (daily_logbooks)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.daily_logbooks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+    tanggal DATE NOT NULL DEFAULT (now() AT TIME ZONE 'Asia/Jakarta')::date,
+    kegiatan TEXT NOT NULL,
+    hasil TEXT,
+    kendala TEXT,
+    rencana_besok TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CONSTRAINT unique_logbook_user_tanggal UNIQUE (user_id, tanggal),
+    CONSTRAINT logbook_kegiatan_not_empty CHECK (length(trim(kegiatan)) >= 5)
+);
+
+CREATE INDEX IF NOT EXISTS idx_logbooks_user_tanggal ON public.daily_logbooks(user_id, tanggal DESC);
+CREATE INDEX IF NOT EXISTS idx_logbooks_tanggal ON public.daily_logbooks(tanggal DESC);
+
+-- ============================================================
+-- 7. TABEL PERIZINAN (leave_requests)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS public.leave_requests (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -254,6 +274,7 @@ ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.locations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.work_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.attendance ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.daily_logbooks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.leave_requests ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Admin dapat mengelola semua user" ON public.users;
@@ -279,6 +300,15 @@ CREATE POLICY "Admin dapat melihat dan mengelola seluruh absensi" ON public.atte
 CREATE POLICY "Magang hanya dapat melihat absensi miliknya" ON public.attendance FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Magang dapat mencatat absen masuk miliknya" ON public.attendance FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Magang dapat memperbarui absen pulang miliknya" ON public.attendance FOR UPDATE USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Admin dapat melihat dan mengelola seluruh logbook" ON public.daily_logbooks;
+DROP POLICY IF EXISTS "Magang dapat melihat logbook miliknya" ON public.daily_logbooks;
+DROP POLICY IF EXISTS "Magang dapat membuat logbook miliknya" ON public.daily_logbooks;
+DROP POLICY IF EXISTS "Magang dapat memperbarui logbook miliknya" ON public.daily_logbooks;
+CREATE POLICY "Admin dapat melihat dan mengelola seluruh logbook" ON public.daily_logbooks FOR ALL USING (public.is_admin());
+CREATE POLICY "Magang dapat melihat logbook miliknya" ON public.daily_logbooks FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Magang dapat membuat logbook miliknya" ON public.daily_logbooks FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Magang dapat memperbarui logbook miliknya" ON public.daily_logbooks FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 DROP POLICY IF EXISTS "Admin dapat melihat dan mengelola seluruh perizinan" ON public.leave_requests;
 DROP POLICY IF EXISTS "Magang dapat melihat izin miliknya" ON public.leave_requests;

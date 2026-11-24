@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { CalendarCheck, History, LogOut } from 'lucide-react'
+import { BookOpen, CalendarCheck, History, LogOut } from 'lucide-react'
 import { logoutAction } from '@/app/(auth)/login/actions'
 import { useTransition } from 'react'
 
@@ -10,7 +10,7 @@ export function BottomNav() {
   const pathname = usePathname()
   const [isPending, startTransition] = useTransition()
 
-  // Hanya Presensi dan Riwayat
+  // Navigasi utama mahasiswa
   const navItems = [
     {
       name: 'Presensi',
@@ -21,6 +21,11 @@ export function BottomNav() {
       name: 'Riwayat Absen',
       href: '/riwayat',
       icon: History,
+    },
+    {
+      name: 'Logbook',
+      href: '/logbook',
+      icon: BookOpen,
     },
   ]
 

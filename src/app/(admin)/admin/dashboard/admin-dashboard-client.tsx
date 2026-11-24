@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { UserProfile, Attendance, LeaveRequest, LocationSetting } from '@/types/database.types'
+import { UserProfile, Attendance, LeaveRequest, LocationSetting, DailyLogbook } from '@/types/database.types'
 import { formatIndonesianDate, formatTimeShort, calculateHaversineDistance } from '@/lib/utils/time'
 import { calibrateOfficeLocationAction } from '@/app/(magang)/dashboard/actions'
 import {
@@ -51,9 +51,10 @@ interface Props {
     belumAbsen: number
   }
   weeklyStats: WeeklyAttendanceStat[]
+  recentLogbooks: DailyLogbook[]
 }
 
-export function AdminDashboardClient({ rows, todayDate, location, stats, weeklyStats }: Props) {
+export function AdminDashboardClient({ rows, todayDate, location, stats, weeklyStats, recentLogbooks }: Props) {
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [radius, setRadius] = useState(String(location?.radius_meter ?? 350))
@@ -317,6 +318,41 @@ export function AdminDashboardClient({ rows, todayDate, location, stats, weeklyS
             </div>
           </aside>
         </div>
+      </section>
+
+      {/* Monitoring Logbook Mahasiswa */}
+      <section className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden animate-fade-up">
+        <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 className="text-sm font-extrabold text-slate-900">Logbook Terbaru Mahasiswa</h2>
+            <p className="text-xs text-slate-500 mt-1">Pantau kegiatan dan progres magang yang terakhir diperbarui.</p>
+          </div>
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-2.5 py-1.5 rounded-xl w-fit">
+            <FileText className="w-3.5 h-3.5" /> {recentLogbooks.length} catatan terbaru
+          </span>
+        </div>
+        {recentLogbooks.length > 0 ? (
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3 p-4">
+            {recentLogbooks.map((logbook) => (
+              <article key={logbook.id} className="rounded-2xl border border-slate-200/80 bg-slate-50/60 p-4 hover:bg-indigo-50/50 hover:border-indigo-200 transition-all">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-xs shrink-0">{logbook.users?.nama?.charAt(0).toUpperCase() || 'M'}</div>
+                    <div className="min-w-0"><p className="text-xs font-bold text-slate-900 truncate">{logbook.users?.nama || 'Mahasiswa'}</p><p className="text-[10px] text-slate-400 truncate">{logbook.users?.nim || 'Tanpa NIM'}</p></div>
+                  </div>
+                  <span className="text-[10px] font-bold text-indigo-600 whitespace-nowrap">{formatIndonesianDate(logbook.tanggal)}</span>
+                </div>
+                <p className="text-xs font-bold text-slate-800 mt-3 line-clamp-3">{logbook.kegiatan}</p>
+                <div className="mt-3 pt-3 border-t border-slate-200/70 space-y-1.5 text-[11px] text-slate-500">
+                  <p><span className="font-bold text-slate-700">Hasil:</span> {logbook.hasil || 'Belum diisi'}</p>
+                  {logbook.kendala && <p><span className="font-bold text-slate-700">Kendala:</span> {logbook.kendala}</p>}
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-slate-400"><FileText className="w-7 h-7 mx-auto mb-2 text-slate-300" /><p className="text-xs">Belum ada logbook dari mahasiswa.</p></div>
+        )}
       </section>
 
       {/* Filter & Pencarian Bar */}

@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentWIBDate, calculateHaversineDistance } from '@/lib/utils/time'
-import { UserProfile, Attendance, LeaveRequest, LocationSetting } from '@/types/database.types'
+import { UserProfile, Attendance, LeaveRequest, LocationSetting, DailyLogbook } from '@/types/database.types'
 import { AdminDashboardClient, StudentAttendanceRow } from './admin-dashboard-client'
 
 export const dynamic = 'force-dynamic'
@@ -69,6 +69,14 @@ export default async function AdminDashboardPage() {
 
   const activeLocation = locations?.[0] || DEFAULT_LOCATION
 
+  // 6. Ambil logbook terbaru mahasiswa untuk monitoring pembimbing
+  const { data: recentLogbooks } = (await supabase
+    .from('daily_logbooks')
+    .select('*, users(*)')
+    .order('tanggal', { ascending: false })
+    .order('updated_at', { ascending: false })
+    .limit(12)) as { data: DailyLogbook[] | null }
+
   // 6. Gabungkan data per mahasiswa
   const studentList = students || []
   const attendanceList = todayAttendance || []
@@ -135,6 +143,7 @@ export default async function AdminDashboardPage() {
         belumAbsen,
       }}
       weeklyStats={weeklyStats}
+      recentLogbooks={recentLogbooks || []}
     />
   )
 }

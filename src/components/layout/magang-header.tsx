@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { UserProfile } from '@/types/database.types'
-import { Building2, CalendarCheck, History, LogOut, Shield } from 'lucide-react'
+import { BookOpen, Building2, CalendarCheck, History, LogOut, Shield } from 'lucide-react'
 import { logoutAction } from '@/app/(auth)/login/actions'
 import { useTransition } from 'react'
 
@@ -15,6 +15,7 @@ export function MagangHeader({ user, isAdmin }: { user: UserProfile; isAdmin?: b
   const navLinks = [
     { name: 'Presensi Hari Ini', href: '/dashboard', icon: CalendarCheck },
     { name: 'Riwayat Absensi', href: '/riwayat', icon: History },
+    { name: 'Logbook Harian', href: '/logbook', icon: BookOpen },
   ]
 
   const handleLogout = () => {

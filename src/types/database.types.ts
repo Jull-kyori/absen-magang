@@ -52,6 +52,19 @@ export interface Attendance {
   users?: UserProfile
 }
 
+export interface DailyLogbook {
+  id: string
+  user_id: string
+  tanggal: string
+  kegiatan: string
+  hasil: string | null
+  kendala: string | null
+  rencana_besok: string | null
+  created_at: string
+  updated_at: string
+  users?: UserProfile
+}
+
 export interface LeaveRequest {
   id: string
   user_id: string
@@ -95,6 +108,20 @@ export interface Database {
         Relationships: [
           {
             foreignKeyName: "attendance_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      daily_logbooks: {
+        Row: DailyLogbook
+        Insert: Partial<DailyLogbook> & { user_id: string; tanggal: string; kegiatan: string }
+        Update: Partial<DailyLogbook>
+        Relationships: [
+          {
+            foreignKeyName: "daily_logbooks_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
